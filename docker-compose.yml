@@ -1,0 +1,75 @@
+services:
+  # ── Mock Microservices Generator ────────────────────────────────────────────
+  generator:
+    build:
+      context: ./services/generator
+    container_name: aiops-generator
+    ports:
+      - "5001:5001"
+    networks:
+      - aiops-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Prometheus ───────────────────────────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:v2.51.2
+    container_name: aiops-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
+    networks:
+      - aiops-net
+    depends_on:
+      - generator
+    restart: unless-stopped
+
+  # ── AIOps Engine ─────────────────────────────────────────────────────────────
+  aiops:
+    build:
+      context: ./services/aiops
+    container_name: aiops-engine
+    ports:
+      - "5002:5002"
+    environment:
+      - PROMETHEUS_URL=http://prometheus:9090
+      - GENERATOR_URL=http://generator:5001
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - POLL_INTERVAL=5
+    networks:
+      - aiops-net
+    depends_on:
+      - prometheus
+      - generator
+    restart: unless-stopped
+
+  # ── Dashboard (React/Vite) ───────────────────────────────────────────────────
+  dashboard:
+    build:
+      context: ./services/dashboard
+    container_name: aiops-dashboard
+    ports:
+      - "3000:80"
+    networks:
+      - aiops-net
+    depends_on:
+      - aiops
+      - generator
+    restart: unless-stopped
+
+networks:
+  aiops-net:
+    driver: bridge
+
+volumes:
+  prometheus_data:

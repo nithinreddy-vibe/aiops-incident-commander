@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aiops-engine
+  labels:
+    app: aiops-engine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aiops-engine
+  template:
+    metadata:
+      labels:
+        app: aiops-engine
+    spec:
+      serviceAccountName: aiops-engine
+      containers:
+        - name: aiops-engine
+          image: aiops-incident-commander-aiops:latest
+          ports:
+            - containerPort: 5002
+          env:
+            - name: PROMETHEUS_URL
+              value: "http://prometheus-server.default.svc.cluster.local:80"
+            - name: GENERATOR_URL
+              value: "http://generator-service.default.svc.cluster.local:80"
+            - name: GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aiops-secrets
+                  key: gemini-api-key
+                  optional: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aiops-engine-service
+spec:
+  selector:
+    app: aiops-engine
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5002
