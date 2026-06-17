@@ -1,6 +1,6 @@
 # ⚡ AIOps Incident Commander
 
-[![CI/CD Pipeline](https://github.com/yourusername/aiops-incident-commander/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/yourusername/aiops-incident-commander/actions)
+[![CI/CD Pipeline](https://github.com/nithinreddy-vibe/aiops-incident-commander/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/nithinreddy-vibe/aiops-incident-commander/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **AIOps Incident Commander** is a comprehensive, open-source showcase project that demonstrates a modern DevOps and Site Reliability Engineering (SRE) stack enhanced by Artificial Intelligence. 
@@ -41,7 +41,7 @@ You can run the entire AIOps platform locally using Docker.
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/yourusername/aiops-incident-commander.git
+    git clone https://github.com/nithinreddy-vibe/aiops-incident-commander.git
     cd aiops-incident-commander
     ```
 
