@@ -22,3 +22,6 @@ build/
 .idea/
 *.swp
 .DS_Store
+
+# Local Documentation
+PROJECT_EXPLANATION.md
